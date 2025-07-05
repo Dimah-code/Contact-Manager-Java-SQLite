@@ -1,7 +1,6 @@
 import javax.swing.plaf.nimbus.State;
 import java.sql.*;
 import java.util.Scanner;
-
 import static java.lang.System.exit;
 
 public class Main {
@@ -9,7 +8,10 @@ public class Main {
         DBHelper.createTable();
         Scanner sc = new Scanner(System.in);
         while(true){
-            System.out.println("\n 1. Add contact \n 2. Show contacts \n 0. Exit");
+            System.out.println("\n 1. Add contact \n" +
+                    "2. Show contacts \n" +
+                    "3. Delete contact \n" +
+                    "0. Exit");
             System.out.print("Choose: ");
             int choice = sc.nextInt();
             sc.nextLine();
@@ -17,6 +19,7 @@ public class Main {
 
                 case 1 -> addContact(sc);
                 case 2 -> showContacts();
+                case 3 -> deleteContact(sc);
                 case 0 -> exit(0);
                 default -> System.out.println("Invalid Option");
             }
@@ -57,6 +60,28 @@ public class Main {
             }
         }catch (SQLException e){
             System.out.println("Failed to load contacts: " + e.getMessage());
+        }
+        try{
+            Thread.sleep(5000);
+        }catch (Exception e){
+            System.out.println("Error");
+        }
+    }
+    private static void deleteContact(Scanner sc){
+        System.out.println("\n Enter Contact's ID: ");
+        int id = sc.nextInt();
+        String sql = "DELETE FROM contacts WHERE id = ?";
+        try(Connection conn = DBHelper.connect();
+        PreparedStatement pstmt = conn.prepareStatement(sql);){
+            pstmt.setInt(1,id);
+            int affectedRow = pstmt.executeUpdate();
+            if(affectedRow > 0){
+                System.out.println("Contact with id " + id + " deleted successfully!");
+            }else{
+                System.out.println("Contact not found!");
+            }
+        }catch(SQLException e){
+            System.out.println("ERROR: " + e.getMessage());
         }
     }
 }
