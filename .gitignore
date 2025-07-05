@@ -7,7 +7,6 @@ out/
 # Build output
 build/
 target/
-out/
 
 # Compiled class files
 *.class
